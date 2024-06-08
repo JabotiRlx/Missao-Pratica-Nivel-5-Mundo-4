@@ -1,0 +1,24 @@
+az iot hub consumer-group create --hub-name iot-missao5-mundo4 --name Consumidor-fullstack
+
+az iot hub show-connection-string --hub-name iot-missao5-mundo4 --policy-name service
+
+{
+  "connectionString": "HostName=iot-missao5-mundo4.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=FBkveeSHXfJWREZyh4epfa2YCwaCD+y8yAIoTHvbW0M="
+}
+
+
+set IotHubConnectionString=HostName=iot-missao5-mundo4.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=FBkveeSHXfJWREZyh4epfa2YCwaCD+y8yAIoTHvbW0M=
+
+set EventHubConsumerGroup=Consumidor-fullstack
+
+az appservice plan create --name app-fullstack --resource-group missao5-mundo4 --sku FREE
+
+az webapp create -n App-IoT12345 -g missao5-mundo4 -p app-fullstack --runtime "NODE:20LTS" --deployment-local-git
+
+az webapp config appsettings set -n App-IoT12345 -g missao5-mundo4 --settings EventHubConsumerGroup=Consumidor-fullstack IotHubConnectionString="HostName=iot-missao5-mundo4.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=FBkveeSHXfJWREZyh4epfa2YCwaCD+y8yAIoTHvbW0M="
+
+az webapp config set -n App-IoT12345 -g missao5-mundo4 --web-sockets-enabled true
+
+az webapp update -n App-IoT12345 -g missao5-mundo4 --https-only true
+
+az webapp show -n App-IoT12345 -g missao5-mundo4 --query state
